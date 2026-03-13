@@ -11,7 +11,6 @@ from core.observability import get_langsmith_callbacks, to_jsonable
 from core.settings import load_config
 
 from tools.context import Context  # Schema do contexto usado pelas tools.
-from tools.get_user_location import get_user_location  # Tool: descobre a localização do usuário.
 from tools.get_weather_for_location import get_weather_for_location
 
 
@@ -40,11 +39,11 @@ Your mission is to help the user with their weather questions.
 Tools:
 
 - get_weather_for_location: use this to get the weather for a specific location
-- get_user_location: use this to get the user's location
 
 Rules:
 If a user asks you for the weather, make sure you know the location. In case user dont pass any location, ask for it and don't answer the question.
-If you can tell from the question that they mean wherever they are, use the get_user_location tool to find their location."""  # Prompt base do agente.
+If a tool returns JSON with success=false, do not call any tool again and reply with the error message.
+"""  # Prompt base do agente.
 
 
 @dataclass
@@ -52,7 +51,7 @@ class ResponseFormat:
     """Response schema for the agent."""  # Schema da resposta estruturada.
 
     agent_response: str  # Resposta principal do agente.
-    weather_conditions: str | None = None  # Campo opcional com condições do tempo.
+    agent_name: str | None = None  # Nome do agente que respondeu.
 
 
 class WeatherAgent:
@@ -71,7 +70,7 @@ class WeatherAgent:
         self._agent = create_agent(  # Cria o agente com prompt e tools.
             model=self._model,
             system_prompt=SYSTEM_PROMPT,
-            tools=[get_user_location, get_weather_for_location],
+            tools=[get_weather_for_location],
             context_schema=Context,  # Schema de contexto para tools.
             response_format=ToolStrategy(ResponseFormat),  # Saída estruturada.
             checkpointer=self._checkpointer,

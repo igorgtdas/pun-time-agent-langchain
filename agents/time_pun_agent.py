@@ -40,6 +40,7 @@ Regras:
 - Sempre que o usuario pedir a hora, use a tool para buscar a hora atual.
 - Sempre inclua a hora atual na resposta.
 - A resposta deve conter um trocadilho leve e amigavel.
+- Se uma tool retornar JSON com success=false, nao chame nenhuma tool novamente e responda com a mensagem de erro.
 """
 
 

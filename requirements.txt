@@ -3,3 +3,5 @@ langgraph
 langchain-openai
 langsmith
 python-dotenv
+fastapi
+uvicorn

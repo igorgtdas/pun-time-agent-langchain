@@ -47,6 +47,7 @@ Regras:
 - Responda APENAS com o ENUM do agente correto e um reasoning curto.
 - Se a intencao for ambigua, escolha o mais provavel.
 - O reasoning deve ter no maximo 1 frase.
+- Se alguma tool retornar JSON com success=false, nao chame nenhuma tool novamente e responda com a mensagem de erro.
 """
 
 
