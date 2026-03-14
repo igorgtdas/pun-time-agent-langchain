@@ -4,16 +4,36 @@ Agente de hora/clima com roteamento e fallback out_of_scope.
 
 ## Requisitos
 - Python 3.11+
-- Dependencias: langchain, langgraph, langchain-openai, langsmith, python-dotenv,
-  fastapi, uvicorn
+- Dependencias: langchain, langgraph, langchain-openai, langsmith,
+  python-dotenv, fastapi, uvicorn
 
 ## Variaveis de ambiente
 Exemplo de `.env`:
 ```
+API_KEY=uma-chave-forte
+OPENAI_API_KEY=
+GROQ_API_KEY=
 JSON_LOGS=true
 LANGSMITH_TRACING=false
-API_KEY=uma-chave-forte
+LANGSMITH_ENDPOINT=https://api.smith.langchain.com
+LANGSMITH_API_KEY=
+LANGSMITH_PROJECT=default
 ```
+
+### Configuracao rapida
+1) Escolha um provedor de LLM:
+   - OpenAI: preencha `OPENAI_API_KEY`
+   - Groq: preencha `GROQ_API_KEY`
+2) Defina a chave da API:
+   - `API_KEY=uma-chave-forte`
+3) (Opcional) Ative tracing do LangSmith:
+   - `LANGSMITH_TRACING=true`
+   - `LANGSMITH_API_KEY=...`
+   - `LANGSMITH_PROJECT=meu_projeto`
+
+### Qual chave usar (OpenAI vs Groq)
+- Use **OpenAI** quando quiser acesso ao modelo `gpt-4.1-mini` (padrao).
+- Use **Groq** se voce configurar o provedor e o modelo via `LLM_PROVIDER` e `LLM_MODEL`.
 
 ## Execucao local (CLI)
 ```
@@ -22,6 +42,21 @@ python -m venv .venv
 python -m pip install -r requirements.txt
 python main.py
 ```
+
+## Memoria por agente (opcional)
+Cada agente aceita `use_memory` e `window_size` no construtor. Por padrao a
+memoria fica desativada.
+
+Exemplo (router e agentes):
+```
+router = RouterAgent(use_memory=True, window_size=3)
+time_agent = TimePunAgent(use_memory=True, window_size=2)
+weather_agent = WeatherAgent(use_memory=True, window_size=3)
+```
+
+Observacao: no roteador, os agentes sao instanciados uma unica vez para manter
+o historico. Ajuste o `window_size` conforme o numero maximo de mensagens que o
+agente deve considerar.
 
 ## Sobre FastAPI (conceito)
 FastAPI e um framework web moderno para Python focado em performance, tipagem e
